@@ -1,6 +1,6 @@
 {
   "name": "hapi-mongoose-connection",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Hapi mongoose connect middleware",
   "main": "index.js",
   "engines": {
