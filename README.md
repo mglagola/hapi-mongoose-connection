@@ -4,13 +4,13 @@
 
 **NPM**
 ```bash
-$ npm install hapi-mongoose-plugin --save
+$ npm install hapi-mongoose-connection --save
 ```
 
 ## Usage
 
 ```js
-const HapiMongoose = require('./middleware/mongoose');
+const HapiMongoose = require('hapi-mongoose-connection');
 const Promise = require('bluebird');
 
 const mongodbURI = process.env.MONGODB_URI;
