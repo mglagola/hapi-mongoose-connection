@@ -1,32 +1,35 @@
-'use strict';
-
 const Mongoose = require('mongoose');
-const omit = require('lodash/omit');
+const F = require('lodash/fp');
+const pkg = require('./package.json');
 
 function connect (uri, options) {
-    return Mongoose.connect(uri, options).connection;
+    Mongoose.connect(uri, options);
+    return Mongoose.connection;
 }
 
-exports.register = function (server, options, next) {
+function register (server, options) {
     const promise = options.promise;
     if (promise) {
         Mongoose.Promise = global.Promise;
     }
 
     const uri = options.uri;
-    const connectOptions = omit(options, ['uri', 'promise']);
+    const connectOptions = F.omit(['uri', 'promise'], options);
     if (!uri) {
-        return next(new Error('`uri` option is required'));
+        throw new Error('`uri` option is required');
     }
 
-    connect(uri, connectOptions)
-        .once('error', next)
-        .on('disconnected', () => connect(uri, connectOptions))
-        .once('open', () => {
-            next();
-        });
+    return new Promise((res, rej) => {
+        connect(uri, connectOptions)
+            .once('error', error => rej(error))
+            .on('disconnected', () => connect(uri, connectOptions))
+            .once('open', () => {
+                res();
+            });
+    });
 };
 
-exports.register.attributes = {
-    name: 'Mongoose',
+module.exports = {
+    pkg,
+    register,
 };
